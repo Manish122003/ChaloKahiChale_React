@@ -1,0 +1,66 @@
+#states-container {
+  margin: 10px 90px;
+  margin-top: 90px;
+}
+
+#cities-img-content {
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
+  height: 370px;
+}
+
+#states-big-img-container {
+  width: 80%;
+  margin-left: 9%;
+   display: flex;
+  gap: 30px;
+  margin-top: 20px;
+  height: 370px;
+  
+}
+
+#states-img-container {
+  width: 90%;
+  height: 400px;
+  margin: auto;
+}
+
+#states-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#cities-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#states-content {
+  width: 100%;
+  align-content: stretch;
+}
+
+#states-content p {
+  font-size: 18px;
+  line-height: 25px;
+}
+
+/* #cities-content {
+  width: 100%;
+} */
+
+#states-images-conatainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px;
+  justify-content: center;
+}
+
+.states-images {
+  width: 220px;
+  height: 140px;
+}
