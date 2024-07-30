@@ -1,0 +1,20 @@
+.img-card img{
+  width: 270px;
+  height: 437px;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+.states-name {
+  background-color: rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  position: relative;
+  /* display: flex;
+  align-items: center; */
+  top: -65px;
+  /* left: 35%; */
+  color: black;
+  width: 100%;
+  text-align: center;
+}

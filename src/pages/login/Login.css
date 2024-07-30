@@ -1,0 +1,234 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-color: grey;
+}
+.login_blur{
+    width:100%;
+    height: 100vh;
+    background: linear-gradient(321deg, rgba(0, 0, 0, 0.2) 5.98%, rgba(0, 0, 0, 0.3) 66.28%), rgba(255, 255, 255, 0.35);
+    box-shadow: -4.96px 2.48px 3.1px 0px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(30.999361038208008px);
+}
+.login{
+    display: flex;
+    width: 950px;
+    height: 530px;
+    background-color: white;
+    margin: auto;
+    position: fixed;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 16px;
+}
+.left_section{
+    width: 50%;
+    height: 100%;
+    border-radius: 16px 0 0 16px;
+    background-image:url('../../components/assets/login_image.png');
+}
+.chalokahichale {
+    margin-top:50px ;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    
+}
+  
+.chalokahichale_title {
+    text-align: center;
+    width: 100%;
+    font: 400 31px/109% 'Source Serif Pro';
+}
+  
+.chalokahichale_description {
+    text-align: center;
+    margin-top: 13px;
+    width: 100%; 
+    font: 500 12px "Source Serif Pro", -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.right_section{
+    align-self: right;
+    width: 50%;
+    height: 100%;
+    position: relative;
+}
+.main_section{
+    width: 308px;
+    height: 368px;
+    /* border: 1px solid #000; */
+    margin: auto;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+}
+.login_title{
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+.login_heading{
+    color: #009ee2;
+}
+.login_form{
+    margin: 15px 30px;
+}
+.group{
+    margin-top: 10px
+}
+.label {
+    /* background-color: #fff; */
+    color: #009ee2;
+    font: 700 12px Poppins, sans-serif;
+    padding: 3px 4px;
+    margin-left: 10px;
+}
+
+.input-container {
+  border: 1px solid rgba(0, 158, 226, 1);
+  border-radius: 6.246px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 13px;
+  font-size: 10px;
+  color: #000;
+  font-weight: 600;
+  line-height: 129%;
+}
+.icon {
+  width: 16px;
+  height: 16px;
+}
+.input {
+  font-family: Source Serif Pro, sans-serif;
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+.password-show-icon {
+  width: 77px;
+  height: 4px;
+  fill: #000;
+  margin-left: auto;
+}
+.forget_password{
+  text-decoration: none;
+  color:dimgrey;
+  float: right;
+  margin: 3px;
+  font-size: small;
+}
+.input-button{
+    border: 0;
+    width: 85px;
+    height: 33px;
+    color: #fff;
+    background-color: #009ee2;
+    border-radius: 3px;
+    margin-top: 10px;
+    align-items: center;
+    margin-left: 32%;
+}
+.button{  
+}
+.or-text {
+    margin:10px;
+    text-align: center;
+}
+.register-container {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 212px;
+    padding: auto;
+}
+.social-icons {
+    display: flex;
+    gap: 7px;
+}
+.social-icon {
+    width: 66px;
+    object-fit: cover;
+    object-position: center;
+}
+.register-cta {
+    margin-top: 18px;
+    align-self: center;
+    font: 500 10px "Source Serif Pro", -apple-system, Roboto, Helvetica, sans-serif;
+}
+.register-link {
+    color: #000;
+    font-weight: 600;
+}
+.img1{
+    margin-top:50px;
+    float:right;
+}
+.img2{
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    border-radius: 5px;
+}
+.img3{
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+    z-index: -20;
+}
+
+/* Add the following media query at the end of your CSS */
+
+@media screen and (max-width: 768px) {
+      
+    .login {
+      flex-direction: column; 
+      width: 80%; 
+      height: auto; 
+      margin: auto; 
+      padding: 30px 10px 30px 10px;
+    }
+  
+  
+    .right_section {
+      width: 100%; 
+    }
+  
+    .main_section {
+      width: 100%; 
+      position: static; 
+      transform: none; 
+      margin: 20px 0; 
+    }
+ 
+    .input-button {
+      width: 100%; 
+      margin-left: 0; 
+    }
+
+  
+    .img1,
+    .img2,
+    .img3,
+    .left_section {
+      display: none; 
+      }
+    }
+
+
+.input {
+    width: calc(100% - 30px); 
+  }
+ 
+
+
+/* Existing CSS styles */
+

@@ -1,0 +1,67 @@
+@import url(https://fonts.googleapis.com/earlyaccess/nicomoji.css);
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+*{
+  margin: 0;
+  padding: 0; 
+  /* overflow: auto; */
+}
+body {
+    font-family: "Lato", sans-serif;
+  }
+
+  .landing-page {
+    display: flex;
+    flex-direction: column;
+  } 
+  
+
+.mainHeader {
+    justify-content: center;
+    background: linear-gradient(321deg,
+        rgba(0, 0, 0, 0.4) 5.98%,
+        rgba(0, 0, 0, 0.4) 66.28%),
+      rgba(255, 255, 255, 0.12);
+    box-shadow: -4.96px 2.48px 3.1px 0px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(30px);
+    display: flex;
+    gap: 20px;
+    padding: 8px 41px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 50px;
+  }
+  
+  .mainHeader-brand {
+    color: #fff;
+    flex-grow: 1;
+    flex-basis: auto;
+    margin:auto 0;
+    font-family: 'Nico Moji';
+    /* overflow: hidden; */
+    /* font: 400 36px/85% ; */
+    font-size: 26px;
+  }
+  
+  
+  .mainHeader-signin {
+    justify-content: center;
+    border-radius: 3px;
+    background-color: #ffda32;
+    color: var(--Main-Dark, #1c2b38);
+    text-align: center;
+    padding: 14px 43px;
+    font: 800 16px/137.5% ;
+    text-decoration: none;
+  }
+
+  .mainHeader-links{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  /* New css */

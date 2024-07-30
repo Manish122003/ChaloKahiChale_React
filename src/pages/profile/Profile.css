@@ -1,0 +1,43 @@
+.profile-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section img {
+  border: 3px solid #5e9e91;
+  padding: 5px;
+}
+
+.profile-section .MuiTypography-h6 {
+  margin-top: 10px;
+}
+
+.form-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-section .MuiTypography-h5 {
+  margin-bottom: 20px;
+}
+
+.action-button {
+  margin-bottom: 10px;
+  width: 200px;
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.save-button:hover {
+  background-color: #45a049;
+}

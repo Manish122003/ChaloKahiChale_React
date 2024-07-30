@@ -1,0 +1,21 @@
+.headingMain{
+    margin: 20px 100px;
+}
+
+.hotelsAll{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    margin-left: 100px;
+}
+
+.totalItems{
+    margin: 20px 100px;
+    font-size: 20px;
+    
+}
+
+.length{
+    color:blue;
+}
