@@ -62,8 +62,6 @@ function App() {
         <Route path="/profile" element={
           <>
             <Profile />
-            <Testimonial />
-            <OfferComponent />
             <Footer />
           </>
         } />
