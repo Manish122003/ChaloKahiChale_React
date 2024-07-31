@@ -1,4 +1,3 @@
-
 const State = require('../Models/state_schema');
 const City = require('../Models/city_schema');
 const Hotel = require('../Models/hotel_schema');
@@ -12,7 +11,17 @@ exports.insertStateDataController = async (req, res) => {
       return res.status(400).json({ message: "Invalid data format" });
     }
 
-    const addedStates = await State.insertMany(states);
+    // Check for existing states
+    const existingStates = await State.find({ state_name: { $in: states.map(state => state.state_name) } });
+    const existingStateNames = existingStates.map(state => state.state_name);
+
+    const newStates = states.filter(state => !existingStateNames.includes(state.state_name));
+
+    if (newStates.length === 0) {
+      return res.status(200).json({ message: "No new states to add" });
+    }
+
+    const addedStates = await State.insertMany(newStates);
     res.status(201).json({ message: "States Added Successfully", addedStates });
   } catch (error) {
     console.log(error);
@@ -29,38 +38,26 @@ exports.insertCityDataController = async (req, res) => {
       return res.status(400).json({ message: "Invalid data format" });
     }
 
-    const stateNames = [...new Set(cities.map(city => city.state_name))];
-    const states = await State.find({ state_name: { $in: stateNames } });
+    // Check for existing cities
+    const existingCities = await City.find({ city_name: { $in: cities.map(city => city.city_name) } });
+    const existingCityNames = existingCities.map(city => city.city_name);
 
-    // Ensure states are found
-    if (states.length === 0) {
-      return res.status(404).json({ message: "No matching states found" });
+    const newCities = cities.filter(city => !existingCityNames.includes(city.city_name));
+
+    if (newCities.length === 0) {
+      return res.status(200).json({ message: "No new cities to add" });
     }
 
-    const stateMap = new Map(states.map(state => [state.state_name, state._id]));
-
-    const cityDocuments = cities.map(city => ({
+    const cityDocuments = newCities.map(city => ({
       city_name: city.city_name,
       city_description: city.city_description,
-      hotel: [],
-      state: stateMap.get(city.state_name) // Ensure this is assigned correctly
+      state: city.state // Add the state as a string field
     }));
 
     const addedCities = await City.insertMany(cityDocuments);
 
-    // Ensure cities are added
     if (addedCities.length === 0) {
       return res.status(500).json({ message: "No cities added" });
-    }
-
-    for (const state of states) {
-      if (state._id) { // Check if _id is valid
-        const citiesInState = addedCities.filter(city => city.state && city.state.toString() === state._id.toString());
-        state.city.push(...citiesInState.map(city => city._id));
-        await state.save();
-      } else {
-        console.warn(`State ${state.state_name} has an undefined ID.`);
-      }
     }
 
     res.status(201).json({ message: "Cities Added Successfully", addedCities });
@@ -69,7 +66,6 @@ exports.insertCityDataController = async (req, res) => {
     res.status(500).json({ message: "Error adding cities", error });
   }
 };
-
 
 // Insert multiple hotels
 exports.insertHotelDataController = async (req, res) => {
@@ -80,38 +76,28 @@ exports.insertHotelDataController = async (req, res) => {
       return res.status(400).json({ message: "Invalid data format" });
     }
 
-    const cityNames = [...new Set(hotels.map(hotel => hotel.city_name))];
-    const cities = await City.find({ city_name: { $in: cityNames } });
+    // Check for existing hotels
+    const existingHotels = await Hotel.find({ hotel_name: { $in: hotels.map(hotel => hotel.hotel_name) } });
+    const existingHotelNames = existingHotels.map(hotel => hotel.hotel_name);
 
-    // Ensure cities are found
-    if (cities.length === 0) {
-      return res.status(404).json({ message: "No matching cities found" });
+    const newHotels = hotels.filter(hotel => !existingHotelNames.includes(hotel.hotel_name));
+
+    if (newHotels.length === 0) {
+      return res.status(200).json({ message: "No new hotels to add" });
     }
 
-    const cityMap = new Map(cities.map(city => [city.city_name, city._id]));
-
-    const hotelDocuments = hotels.map(hotel => ({
+    const hotelDocuments = newHotels.map(hotel => ({
       hotel_name: hotel.hotel_name,
       hotel_review: hotel.hotel_review,
       hotel_price: hotel.hotel_price,
-      city: cityMap.get(hotel.city_name) // Ensure this is assigned correctly
+      city: hotel.city, // Add the city as a string field
+      state: hotel.state // Add the state as a string field
     }));
 
     const addedHotels = await Hotel.insertMany(hotelDocuments);
 
-    // Ensure hotels are added
     if (addedHotels.length === 0) {
       return res.status(500).json({ message: "No hotels added" });
-    }
-
-    for (const city of cities) {
-      if (city._id) { // Check if _id is valid
-        const hotelsInCity = addedHotels.filter(hotel => hotel.city && hotel.city.toString() === city._id.toString());
-        city.hotel.push(...hotelsInCity.map(hotel => hotel._id));
-        await city.save();
-      } else {
-        console.warn(`City ${city.city_name} has an undefined ID.`);
-      }
     }
 
     res.status(201).json({ message: "Hotels Added Successfully", addedHotels });
@@ -121,18 +107,28 @@ exports.insertHotelDataController = async (req, res) => {
   }
 };
 
-
-
-// Fetch state data with populated cities and hotels
+// Fetch state data
 exports.getController = async (req, res) => {
   try {
-    const stateData = await State.findOne({ state_name: "Gujarat" }).populate({
-      path: 'city',
-      populate: {
-        path: 'hotel'
-      }
+    const { state_name } = req.query;
+
+    // Fetch states with city and hotel data
+    const stateData = await State.findOne({ state_name });
+
+    if (!stateData) {
+      return res.status(404).json({ message: "State not found" });
+    }
+
+    // Fetch cities and hotels related to the state
+    const cities = await City.find({ state: state_name });
+    const hotels = await Hotel.find({ state: state_name });
+
+    res.status(200).json({
+      message: "State data fetched successfully",
+      stateData,
+      cities,
+      hotels
     });
-    res.status(200).json({ message: "State data fetched successfully", stateData });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error fetching state data", error });

@@ -4,12 +4,10 @@ const {
   insertStateDataController,
   insertCityDataController,
   insertHotelDataController,
-  getController
-} = require('../Controllers/insert_data');
+} = require('../Controllers/insert_data_conroller');
 
 router.post('/addstate', insertStateDataController);
 router.post('/addcity', insertCityDataController);
 router.post('/addhotel', insertHotelDataController);
-router.get('/get', getController);
 
 module.exports = router;

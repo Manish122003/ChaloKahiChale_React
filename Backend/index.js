@@ -2,13 +2,15 @@
 const express = require("express");
 const app = express();
 const port = 4000;
-const addData = require("./Routes/insert_State");
+const insertData = require("./Routes/insert_data");
+const fetchData = require("./Routes/fetch_data");
 const { default: mongoose } = require("mongoose");
 app.get("/", (req, res) => {
   res.send("This is the homepage");
 });
 app.use(express.json());
-app.use("/api/v1", addData);
+app.use("/api/v1", insertData);
+app.use("/api/v1", fetchData);
 mongoose
   .connect(
     "mongodb+srv://sakhisdesai:i4tjVRFbafwbNg86@city.yuggjnh.mongodb.net/?retryWrites=true&w=majority&appName=city"
