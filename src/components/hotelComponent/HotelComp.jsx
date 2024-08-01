@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Hotels } from "../../hotelData";
-import { CartContext } from "../../contexts/CartContext";
 
-const HotelComp = () => {
+import React, { useContext } from 'react';
+import { Card, CardContent, CardMedia, Typography, Button, Grid } from '@mui/material';
+import { CartContext } from '../../contexts/CartContext';
 
+const HotelComp = ({ hotels = [] }) => {
   const { addHotel } = useContext(CartContext);
 
   const handleClick = (id) => {
@@ -11,61 +11,57 @@ const HotelComp = () => {
   };
 
   return (
-    <>
-      {Hotels.map((hotel) => (
-        <div className="hotel" key={hotel.id} id={`hotel-${hotel.id}`}>
-          <div className="left" id={`hotel-image-container-${hotel.id}`}>
-            <img
-              src={hotel.hotelImg}
-              alt="Hotel image"
-              id={`hotel-image-${hotel.id}`}
-            />
-          </div>
-          <div className="right" id={`hotel-details-${hotel.id}`}>
-            <div className="leftside" id={`hotel-leftside-${hotel.id}`}>
-              <div className="upper" id={`hotel-upper-${hotel.id}`}>
-                <button className="tag" id={`hotel-tag-${hotel.id}`}>
-                  HOTEL
-                </button>
-                <span
-                  className="star"
-                  style={{ fontSize: "10px" }}
-                  id={`hotel-star-${hotel.id}`}
+    <Grid container spacing={2}>
+      {hotels.length > 0 ? (
+        hotels.map((hotel, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <Card variant="outlined">
+              <CardMedia
+                component="img"
+                height="140"
+                image={hotel.image_urls[0]} // Display the first image from the array
+                alt={`${hotel.hotel_name} image`}
+              />
+              <CardContent>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  noWrap
+                  sx={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
                 >
-                  ⭐⭐⭐⭐⭐({hotel.reviews} reviews)
-                </span>
-              </div>
-              <div className="middle" id={`hotel-middle-${hotel.id}`}>
-                <h2 id={`hotel-title-${hotel.id}`}>{hotel.title}</h2>
-              </div>
-              <div className="lower" id={`hotel-lower-${hotel.id}`}>
-                <span id={`hotel-distance-${hotel.id}`}>{hotel.distance}</span>
-                <span id={`hotel-transport-${hotel.id}`}>Transport</span>
-                {/* <span> ₹ {hotel.price}</span> */}
-              </div>
-            </div>
-            <div className="rightside" id={`hotel-rightside-${hotel.id}`}>
-              <button
-                id={`hotel-book-button-${hotel.id}`}
-                onClick={() => handleClick(hotel.id)}
-              >
-                Read Later
-              </button>
-              {/* <br /><br />
-              <button
-                id={`hotel-book-button-${hotel.id}`}
-                onClick={() => handleClick(hotel.id)}
-              >
-                Read Later
-              </button> */}
-            </div>
-          </div>
-        </div>
-      ))}
-
-      <br />
-      <br />
-    </>
+                  {hotel.hotel_name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  ({hotel.hotel_review} reviews)
+                </Typography>
+                <Typography variant="body1" color="text.primary">
+                  ₹ {hotel.hotel_price}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {hotel.state}
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleClick(index)}
+                  fullWidth
+                >
+                  Read Later
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))
+      ) : (
+        <Typography variant="h6" component="div" sx={{ width: '100%', textAlign: 'center', mt: 2 }}>
+          No hotels found.
+        </Typography>
+      )}
+    </Grid>
   );
 };
 

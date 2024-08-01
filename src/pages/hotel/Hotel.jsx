@@ -1,228 +1,241 @@
-import React from "react";
-import Blog from "../../components/blog/Blog";
-import Card from "../../components/cardState/Card";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import HotelComp from "../../components/hotelComponent/HotelComp";
+import { Container, Grid, TextField, Select, MenuItem, Button, Typography, CircularProgress, FormControl, InputLabel, Box } from '@mui/material';
 
-const Hotel = () => {
+const HotelSearch = () => {
+  const BASE_URL = 'http://localhost:4000/api/v1';
+  const [loading, setLoading] = useState(false);
+  const [hotels, setHotels] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [filters, setFilters] = useState({
+    state: "",
+    city: "",
+    minPrice: "",
+    maxPrice: "",
+    minRating: "",
+  });
+  const [sortOption, setSortOption] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  useEffect(() => {
+    const fetchStates = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/getstates`);
+        setStates(response.data.states || []);
+      } catch (error) {
+        console.error("Error fetching states:", error);
+      }
+    };
+    fetchStates();
+  }, []);
+
+  useEffect(() => {
+    if (filters.state) {
+      const fetchCities = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/getcitiesbystate?state_name=${filters.state}`);
+          setCities(response.data.cities || []);
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+        }
+      };
+      fetchCities();
+    } else {
+      setCities([]);
+    }
+  }, [filters.state]);
+
+  const fetchHotels = async () => {
+    let url = `${BASE_URL}/gethotels`;
+    if (filters.state || filters.city || filters.minPrice || filters.maxPrice || filters.minRating) {
+      url = `${BASE_URL}/gethotelsbystatecityratingandprice?state=${filters.state}&city=${filters.city}`;
+      if (filters.minPrice) url += `&minPrice=${filters.minPrice}`;
+      if (filters.maxPrice) url += `&maxPrice=${filters.maxPrice}`;
+      if (filters.minRating) url += `&minRating=${filters.minRating}`;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.get(url);
+      setHotels(response.data.hotels || []);
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmitFilters = () => {
+    fetchHotels();
+  };
+
+  const handleSortChange = (e) => {
+    const selectedSortOption = e.target.value;
+    setSortOption(selectedSortOption);
+
+    let sortedHotels = [...hotels];
+    switch (selectedSortOption) {
+      case "price_asc":
+        sortedHotels.sort((a, b) => a.hotel_price - b.hotel_price);
+        break;
+      case "price_desc":
+        sortedHotels.sort((a, b) => b.hotel_price - a.hotel_price);
+        break;
+      case "rating_asc":
+        sortedHotels.sort((a, b) => a.hotel_review - b.hotel_review);
+        break;
+      case "rating_desc":
+        sortedHotels.sort((a, b) => b.hotel_review - a.hotel_review);
+        break;
+      default:
+        break;
+    }
+    setHotels(sortedHotels);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = hotels.slice(indexOfFirstItem, indexOfLastItem);
+
+  useEffect(() => {
+    fetchHotels();
+  }, []);
+
   return (
-    <>
-      <main className="content" id="main-content">
-        <h3>Filter</h3>
-        <h3>States:select City:select Filter:by price, by rating sort:(high to low,low to high)</h3>
-        <div className="title" id="title-section">
-          <div className="left" id="title-left">
-            <h2 id="title-heading">Hotels near Chittorgarh</h2>
-            <p className="subtext" id="title-subtext">
-              7 Hotels Found
-            </p>
-          </div>
-          <div className="right" id="title-right">
-            <span className="sortby" id="sortby-label">
-              Sort By
-            </span>
-            <select name="popularity" className="select" id="sortby-select">
-              <option className="option" value="Popularity">
-                Popularity
-              </option>
-              <option value="Newest">Newest</option>
-              <option value="Oldest">Oldest</option>
-            </select>
-          </div>
-        </div>
-        <div className="details" id="details-section">
-          {/* <div className="filters" id="filters-section">
-            <div className="heading" id="filters-heading">
-              <p>Filters</p>
-            </div>
-            <br />
-            <div className="filter-by-price" id="filter-by-price">
-              <p id="price-label">Price</p>
-              <hr />
-              <div className="price" id="price-1k-2k">
-                <input
-                  type="checkbox"
-                  id="price-1k-2k-checkbox"
-                  name="price"
-                  value="1k-2k"
-                />
-                <label htmlFor="price-1k-2k-checkbox">1k - 2k</label>
-                <br />
-              </div>
-              <div className="price" id="price-2k-5k">
-                <input
-                  type="checkbox"
-                  id="price-2k-5k-checkbox"
-                  name="price"
-                  value="2k-5k"
-                />
-                <label htmlFor="price-2k-5k-checkbox">2k - 5k</label>
-                <br />
-              </div>
-              <div className="price" id="price-5k-10k">
-                <input
-                  type="checkbox"
-                  id="price-5k-10k-checkbox"
-                  name="price"
-                  value="5k-10k"
-                />
-                <label htmlFor="price-5k-10k-checkbox">5k - 10k</label>
-                <br />
-              </div>
-              <div className="price" id="price-10k-20k">
-                <input
-                  type="checkbox"
-                  id="price-10k-20k-checkbox"
-                  name="price"
-                  value="10k-20k"
-                />
-                <label htmlFor="price-10k-20k-checkbox">10k - 20k</label>
-                <br />
-              </div>
-              <div className="price" id="price-20k-40k">
-                <input
-                  type="checkbox"
-                  id="price-20k-40k-checkbox"
-                  name="price"
-                  value="20k-40k"
-                />
-                <label htmlFor="price-20k-40k-checkbox">20k - 40k</label>
-                <br />
-              </div>
-            </div>
-            <br />
-            <div className="filter-by-rating" id="filter-by-rating">
-              <p id="rating-label">Rating</p>
-              <hr />
-              <div className="rating" id="rating-5">
-                <input
-                  type="checkbox"
-                  id="rating-5-checkbox"
-                  name="rating"
-                  value="5"
-                />
-                <label htmlFor="rating-5-checkbox">5 ⭐</label>
-                <br />
-              </div>
-              <div className="rating" id="rating-4">
-                <input
-                  type="checkbox"
-                  id="rating-4-checkbox"
-                  name="rating"
-                  value="4"
-                />
-                <label htmlFor="rating-4-checkbox">4 ⭐ &amp; above</label>
-                <br />
-              </div>
-              <div className="rating" id="rating-3">
-                <input
-                  type="checkbox"
-                  id="rating-3-checkbox"
-                  name="rating"
-                  value="3"
-                />
-                <label htmlFor="rating-3-checkbox">3 ⭐ &amp; above</label>
-                <br />
-              </div>
-              <div className="rating" id="rating-below-2">
-                <input
-                  type="checkbox"
-                  id="rating-below-2-checkbox"
-                  name="rating"
-                  value="below-2"
-                />
-                <label htmlFor="rating-below-2-checkbox">below 2 ⭐ </label>
-                <br />
-              </div>
-              <div className="rating" id="price-range">
-                <input
-                  type="checkbox"
-                  id="price-range-checkbox"
-                  name="price-range"
-                  value="20k-40k"
-                />
-                <label htmlFor="price-range-checkbox">20k - 40k</label>
-                <br />
-              </div>
-            </div>
-            <br />
-            <div className="filter-by-range" id="filter-by-range">
-              <p id="range-label">Destination Range</p>
-              <hr />
-              <div className="range" id="range-input">
-                <input type="range" name="range" id="range-slider" />
-                <br />
-                <label htmlFor="range-slider">1km to 10km</label>
-              </div>
-            </div>
-          </div> */}
-          <div className="hotels" id="hotels-section">
-            <HotelComp />
-            <div className="loadmore" id="load-more">
-              <span id="load-more-text">Load More</span>
-            </div>
-          </div>
-        </div>
-        <div className="nearby" id="nearby-places-section">
-          <div className="title" id="nearby-title">
-            <h1 id="nearby-heading">Nearby Places</h1>
-            <div id="nearby-buttons">
-              <button className="leftb" id="nearby-left-button">
-                &lt;
-              </button>
-              <button className="rightb" id="nearby-right-button">
-                &gt;
-              </button>
-            </div>
-          </div>
-          <div className="cards" id="nearby-cards">
-            <Card place="nearby" />
-          </div>
-        </div>
-        <div className="nearby" id="outside-places-section">
-          <div className="title" id="outside-title">
-            <h1 id="outside-heading">Outside the City Specials</h1>
-            <div id="outside-buttons">
-              <button className="leftb" id="outside-left-button">
-                &lt;
-              </button>
-              <button className="rightb" id="outside-right-button">
-                &gt;
-              </button>
-            </div>
-          </div>
-          <div className="cards" id="outside-cards">
-            <Card place="outside" />
-          </div>
-        </div>
-        <br />
-        <br />
-        <br />
-        <br />
-        <div className="blogsection" id="blog-section">
-          <div className="bloghead" id="blog-heading">
-            <div className="left" id="blog-left">
-              <h1 id="blog-main-heading">Latest Stories From The City</h1>
-              <p id="blog-description">
-                Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-                amet sint. Velit officia consequat duis enim velit mollit
-              </p>
-            </div>
-            <div className="right" id="blog-right">
-              <button id="view-all-posts-button">View All Posts</button>
-            </div>
-          </div>
-          <br />
-          <br />
-          <br />
-          <div className="blogs" id="blogs-section">
-            <Blog />
-          </div>
-        </div>
-        <br />
-        <br />
-      </main>
-    </>
+    <Container>
+      {/* <Typography variant="h4" mt={8} gutterBottom> </Typography> */}
+      <Box mb={2} mt={15}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={2}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="state-label">State</InputLabel>
+              <Select
+                labelId="state-label"
+                name="state"
+                value={filters.state}
+                onChange={handleInputChange}
+                label="State"
+              >
+                <MenuItem value=""><em>Select State</em></MenuItem>
+                {states.map((state) => (
+                  <MenuItem key={state._id} value={state.state_name}>
+                    {state.state_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <FormControl fullWidth variant="outlined" disabled={!filters.state}>
+              <InputLabel id="city-label">City</InputLabel>
+              <Select
+                labelId="city-label"
+                name="city"
+                value={filters.city}
+                onChange={handleInputChange}
+                label="City"
+              >
+                <MenuItem value=""><em>Select City</em></MenuItem>
+                {cities.map((city) => (
+                  <MenuItem key={city._id} value={city.city_name}>
+                    {city.city_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Min Price"
+              name="minPrice"
+              type="number"
+              value={filters.minPrice}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Max Price"
+              name="maxPrice"
+              type="number"
+              value={filters.maxPrice}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Min Rating"
+              name="minRating"
+              type="number"
+              value={filters.minRating}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}  >
+            <Button variant="contained" color="primary" onClick={handleSubmitFilters}  sx={{ height: '56px' , width: '175px' }} >
+              Apply Filters
+
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box mb={2}>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel id="sort-label">Sort By</InputLabel>
+          <Select
+            labelId="sort-label"
+            name="sortOption"
+            value={sortOption}
+            onChange={handleSortChange}
+            label="Sort By"
+          >
+            <MenuItem value=""><em>Select Option</em></MenuItem>
+            <MenuItem value="price_asc">Price: Low to High</MenuItem>
+            <MenuItem value="price_desc">Price: High to Low</MenuItem>
+            <MenuItem value="rating_asc">Rating: Low to High</MenuItem>
+            <MenuItem value="rating_desc">Rating: High to Low</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+      <Box mb={2}>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <HotelComp hotels={currentItems} />
+        )}
+      </Box>
+      <Box mb={2} display="flex" justifyContent="center">
+        {Array.from({ length: Math.ceil(hotels.length / itemsPerPage) }, (_, i) => (
+          <Button
+            key={i}
+            variant="outlined"
+            color="primary"
+            onClick={() => setCurrentPage(i + 1)}
+            sx={{ margin: 1 }}
+          >
+            {i + 1}
+          </Button>
+        ))}
+      </Box>
+    </Container>
   );
 };
 
-export default Hotel;
+export default HotelSearch;
