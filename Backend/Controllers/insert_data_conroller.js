@@ -1,6 +1,6 @@
-const State = require('../Models/state_schema');
-const City = require('../Models/city_schema');
-const Hotel = require('../Models/hotel_schema');
+const State = require("../Models/state_schema");
+const City = require("../Models/city_schema");
+const Hotel = require("../Models/hotel_schema");
 
 // Insert multiple states
 exports.insertStateDataController = async (req, res) => {
@@ -12,17 +12,21 @@ exports.insertStateDataController = async (req, res) => {
     }
 
     // Check for existing states
-    const existingStates = await State.find({ state_name: { $in: states.map(state => state.state_name) } });
-    const existingStateNames = existingStates.map(state => state.state_name);
+    const existingStates = await State.find({
+      state_name: { $in: states.map((state) => state.state_name) },
+    });
+    const existingStateNames = existingStates.map((state) => state.state_name);
 
-    const newStates = states.filter(state => !existingStateNames.includes(state.state_name));
+    const newStates = states.filter(
+      (state) => !existingStateNames.includes(state.state_name)
+    );
 
     if (newStates.length === 0) {
       return res.status(200).json({ message: "No new states to add" });
     }
 
     const addedStates = await State.insertMany(newStates);
-    res.status(201).json({ message: "States Added Successfully", addedStates });
+    res.status(200).json({ message: "States Added Successfully", addedStates });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error adding states", error });
@@ -74,20 +78,24 @@ exports.insertCityDataController = async (req, res) => {
       return res.status(400).json({ message: "Invalid data format" });
     }
 
-    const existingCities = await City.find({ city_name: { $in: cities.map(city => city.city_name) } });
-    const existingCityNames = existingCities.map(city => city.city_name);
+    const existingCities = await City.find({
+      city_name: { $in: cities.map((city) => city.city_name) },
+    });
+    const existingCityNames = existingCities.map((city) => city.city_name);
 
-    const newCities = cities.filter(city => !existingCityNames.includes(city.city_name));
+    const newCities = cities.filter(
+      (city) => !existingCityNames.includes(city.city_name)
+    );
 
     if (newCities.length === 0) {
       return res.status(200).json({ message: "No new cities to add" });
     }
 
-    const cityDocuments = newCities.map(city => ({
+    const cityDocuments = newCities.map((city) => ({
       city_name: city.city_name,
       city_description: city.city_description,
       state: city.state,
-      image_urls: city.image_urls || [] // Handle image_urls if they exist
+      image_urls: city.image_urls || [], // Handle image_urls if they exist
     }));
 
     const addedCities = await City.insertMany(cityDocuments);
@@ -96,13 +104,12 @@ exports.insertCityDataController = async (req, res) => {
       return res.status(500).json({ message: "No cities added" });
     }
 
-    res.status(201).json({ message: "Cities Added Successfully", addedCities });
+    res.status(200).json({ message: "Cities Added Successfully", addedCities });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error adding cities", error });
   }
 };
-
 
 // Insert multiple hotels
 // exports.insertHotelDataController = async (req, res) => {
@@ -152,22 +159,26 @@ exports.insertHotelDataController = async (req, res) => {
       return res.status(400).json({ message: "Invalid data format" });
     }
 
-    const existingHotels = await Hotel.find({ hotel_name: { $in: hotels.map(hotel => hotel.hotel_name) } });
-    const existingHotelNames = existingHotels.map(hotel => hotel.hotel_name);
+    const existingHotels = await Hotel.find({
+      hotel_name: { $in: hotels.map((hotel) => hotel.hotel_name) },
+    });
+    const existingHotelNames = existingHotels.map((hotel) => hotel.hotel_name);
 
-    const newHotels = hotels.filter(hotel => !existingHotelNames.includes(hotel.hotel_name));
+    const newHotels = hotels.filter(
+      (hotel) => !existingHotelNames.includes(hotel.hotel_name)
+    );
 
     if (newHotels.length === 0) {
       return res.status(200).json({ message: "No new hotels to add" });
     }
 
-    const hotelDocuments = newHotels.map(hotel => ({
+    const hotelDocuments = newHotels.map((hotel) => ({
       hotel_name: hotel.hotel_name,
       hotel_review: hotel.hotel_review,
       hotel_price: hotel.hotel_price,
       city: hotel.city,
       state: hotel.state,
-      image_urls: hotel.image_urls || [] // Handle image_urls if they exist
+      image_urls: hotel.image_urls || [], // Handle image_urls if they exist
     }));
 
     const addedHotels = await Hotel.insertMany(hotelDocuments);
@@ -176,13 +187,12 @@ exports.insertHotelDataController = async (req, res) => {
       return res.status(500).json({ message: "No hotels added" });
     }
 
-    res.status(201).json({ message: "Hotels Added Successfully", addedHotels });
+    res.status(200).json({ message: "Hotels Added Successfully", addedHotels });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error adding hotels", error });
   }
 };
-
 
 // Fetch state data
 // exports.getController = async (req, res) => {
@@ -216,7 +226,9 @@ exports.getController = async (req, res) => {
     const { state_name } = req.query;
 
     if (!state_name) {
-      return res.status(400).json({ message: "State name query parameter is required" });
+      return res
+        .status(400)
+        .json({ message: "State name query parameter is required" });
     }
 
     const stateData = await State.findOne({ state_name });
@@ -232,7 +244,7 @@ exports.getController = async (req, res) => {
       message: "State data fetched successfully",
       stateData,
       cities,
-      hotels
+      hotels,
     });
   } catch (error) {
     console.log(error);

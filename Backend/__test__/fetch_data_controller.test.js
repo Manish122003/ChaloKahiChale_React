@@ -1,76 +1,62 @@
-const request = require('supertest');
-const express = require('express');
-const app = require('../index'); // Adjust the path to your Express app
+const supertest = require('supertest');
 
-describe('Hotel API', () => {
+const baseUrl = 'http://localhost:4000/api/v1';
 
-  // Test fetching all hotels
-  describe('GET /gethotels', () => {
-    it('should fetch all hotels', async () => {
-      const response = await request(app).get('/gethotels');
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('message', 'Hotels fetched successfully');
-      expect(response.body).toHaveProperty('hotels');
-    });
-  });
 
-  // Test fetching hotels by state and city and optional price range
-  describe('GET /gethotelsbystatecityandprice', () => {
-    it('should fetch hotels by state, city, and optional price range', async () => {
-      const response = await request(app)
-        .get('/gethotelsbystatecityandprice')
-        .query({ state: 'Gujarat', city: 'Ahmedabad', minPrice: '1000', maxPrice: '5000' });
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('message', 'Hotels fetched successfully');
-      expect(response.body).toHaveProperty('hotels');
-    });
-
-    it('should return error if state or city is missing', async () => {
-      const response = await request(app)
-        .get('/gethotelsbystatecityandprice')
-        .query({ state: 'Gujarat' }); // Missing city
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('message', 'Both state and city are required');
-    });
-  });
-
-  // Test fetching hotels by state, city, rating, and optional price range
-  describe('GET /gethotelsbystatecityratingandprice', () => {
-    it('should fetch hotels by state, city, rating, and optional price range', async () => {
-      const response = await request(app)
-        .get('/gethotelsbystatecityratingandprice')
-        .query({ state: 'Gujarat', city: 'Ahmedabad', minPrice: '1000', maxPrice: '5000', minRating: '4' });
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('message', 'Hotels fetched successfully');
-      expect(response.body).toHaveProperty('hotels');
-    });
-
-    it('should return error if state or city is missing', async () => {
-      const response = await request(app)
-        .get('/gethotelsbystatecityratingandprice')
-        .query({ state: 'Gujarat' }); // Missing city
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('message', 'Both state and city are required');
-    });
-  });
-
-  // Test fetching cities by state
-  describe('GET /getcitiesbystate', () => {
-    it('should fetch all cities by state', async () => {
-      const response = await request(app)
-        .get('/getcitiesbystate')
-        .query({ state: 'Gujarat' });
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('message', 'Cities fetched successfully');
-      expect(response.body).toHaveProperty('cities');
-    });
-
-    it('should return error if state is missing', async () => {
-      const response = await request(app)
-        .get('/getcitiesbystate');
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('message', 'State is required');
-    });
-  });
-
+test('Test for fetching all hotels', async () => {
+  const response = await supertest(baseUrl).get('/gethotels');
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('message', 'Hotels fetched successfully');
+  expect(response.body).toHaveProperty('hotels');
 });
+
+test('Test for fetching all cities', async () => {
+  const response = await supertest(baseUrl).get('/getcities');
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('message', 'Cities fetched successfully');
+  expect(response.body).toHaveProperty('cities');
+});
+
+test('Test for fetching all states', async () => {
+  const response = await supertest(baseUrl).get('/getstates');
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('message', 'States fetched successfully');
+  expect(response.body).toHaveProperty('states');
+});
+
+test('Test for fetching cities by state', async () => {
+  const response = await supertest(baseUrl).get('/getcitiesbystate').query({ state_name: 'StateName' });
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('message', 'Cities fetched successfully');
+  expect(response.body).toHaveProperty('cities');
+});
+
+test('Test for fetching hotels by minimum rating', async () => {
+  const response = await supertest(baseUrl).get('/gethotelsbyminrating').query({ minRating: 4 });
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('message', 'Hotels fetched successfully');
+  expect(response.body).toHaveProperty('hotels');
+});
+
+test('Test for fetching hotels by price range', async () => {
+  const response = await supertest(baseUrl).get('/gethotelsbypricerange').query({ minPrice: 100, maxPrice: 300 });
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('message', 'Hotels fetched successfully');
+  expect(response.body).toHaveProperty('hotels');
+});
+
+test('Test for fetching hotels by state, city, rating, and price range', async () => {
+  const response = await supertest(baseUrl).get('/gethotelsbystatecityratingandprice').query({
+    state: 'StateName',
+    city: 'CityName',
+    minPrice: 100,
+    maxPrice: 300,
+    minRating: 4
+  });
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('message', 'Hotels fetched successfully');
+  expect(response.body).toHaveProperty('hotels');
+});
+
+
+

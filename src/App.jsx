@@ -76,7 +76,7 @@ function App() {
         <Route path="/hotel" element={
           <>
             <Hotel />
-            <Testimonial />
+       
             <OfferComponent />
             <Footer />
           </>
